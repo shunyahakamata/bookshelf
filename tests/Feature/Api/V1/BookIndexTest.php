@@ -284,7 +284,7 @@ class BookIndexTest extends TestCase
 
         $response->assertJsonPath('data.0.reviews_count', 2);
 
-        $this->assertEquals(
+        $this->assertSame(
             4.5,
             $response->json('data.0.average_rating')
         );
@@ -323,5 +323,61 @@ class BookIndexTest extends TestCase
         $response->assertStatus(422);
 
         $response->assertJsonValidationErrors(['page']);
+    }
+
+    public function test_pagination_links_preserve_query_parameters(): void
+    {
+        Book::factory()->count(5)->create();
+
+        $response = $this->getJson('/api/v1/books?per_page=2&page=1');
+
+        $response->assertOk();
+
+        $nextUrl = $response->json('links.next');
+
+        $this->assertNotNull($nextUrl);
+
+        $query = [];
+
+        parse_str(parse_url($nextUrl, PHP_URL_QUERY), $query);
+
+        $this->assertSame('2', $query['per_page']);
+        $this->assertSame('2', $query['page']);
+    }
+
+    public function test_pagination_links_preserve_keyword_and_genre_filters(): void
+    {
+        $technicalGenre = Genre::factory()->create([
+            'name' => '技術書',
+        ]);
+
+        $books = Book::factory()->count(3)->create([
+            'title' => 'Laravel入門',
+        ]);
+
+        foreach ($books as $book) {
+            $book->genres()->attach($technicalGenre->id);
+        }
+
+        $response = $this->getJson(
+            '/api/v1/books?keyword=Laravel&genre_id='.$technicalGenre->id.'&per_page=2'
+        );
+
+        $response->assertOk();
+
+        $response->assertJsonCount(2, 'data');
+
+        $nextUrl = $response->json('links.next');
+
+        $this->assertNotNull($nextUrl);
+
+        $query = [];
+
+        parse_str(parse_url($nextUrl, PHP_URL_QUERY), $query);
+
+        $this->assertSame('Laravel', $query['keyword']);
+        $this->assertSame((string) $technicalGenre->id, $query['genre_id']);
+        $this->assertSame('2', $query['per_page']);
+        $this->assertSame('2', $query['page']);
     }
 }

@@ -32,7 +32,9 @@ class BookResource extends JsonResource
                 });
             }),
 
-            'average_rating' => $this->reviews_avg_rating,
+            'average_rating' => $this->reviews_avg_rating === null
+    ? null
+    : (float) $this->reviews_avg_rating,
             'reviews_count' => $this->reviews_count,
         ];
     }

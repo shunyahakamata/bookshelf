@@ -31,7 +31,8 @@ class BookController extends Controller
                 });
             })
             ->latest()
-            ->paginate($perPage);
+            ->paginate($perPage)
+            ->withQueryString();
 
         return BookResource::collection($books);
     }
