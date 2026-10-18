@@ -21,6 +21,6 @@ class FavoriteController extends Controller
             ->favoriteBooks()
             ->paginate(10);
 
-        return view('favorites.index',compact('books'));
+        return view('favorites.index', compact('books'));
     }
 }

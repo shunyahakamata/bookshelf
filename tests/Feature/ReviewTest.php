@@ -2,12 +2,11 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
 use App\Models\Book;
-use App\Models\User;
 use App\Models\Review;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class ReviewTest extends TestCase
 {
@@ -25,22 +24,23 @@ class ReviewTest extends TestCase
         ];
 
         $response = $this->actingAs($user)
-                    ->post(route('reviews.store',$book),$data);
+            ->post(route('reviews.store', $book), $data);
 
-        $this->assertDatabaseHas('reviews',[
+        $this->assertDatabaseHas('reviews', [
             'user_id' => $user->id,
             'book_id' => $book->id,
             'rating' => 5,
             'comment' => 'とても面白かったです。',
         ]);
 
-        $response->assertRedirect(route('books.show',$book));
+        $response->assertRedirect(route('books.show', $book));
 
         $response->assertSessionHas(
             'success',
             'レビューを投稿しました。'
         );
     }
+
     public function test_user_cannot_review_the_same_book_twice(): void
     {
         $user = User::factory()->create();
@@ -58,7 +58,7 @@ class ReviewTest extends TestCase
         ];
 
         $response = $this->actingAs($user)
-                    ->post(route('reviews.store',$book),$data);
+            ->post(route('reviews.store', $book), $data);
 
         $response->assertSessionHasErrors('review');
 
@@ -82,23 +82,24 @@ class ReviewTest extends TestCase
         ];
 
         $response = $this->actingAs($user)
-                    ->put(route('reviews.update',$review),$data);
+            ->put(route('reviews.update', $review), $data);
 
-        $this->assertDatabaseHas('reviews',[
+        $this->assertDatabaseHas('reviews', [
             'id' => $review->id,
             'user_id' => $user->id,
             'book_id' => $book->id,
             'rating' => 3,
-            'comment' => 'レビューを更新しました。'
+            'comment' => 'レビューを更新しました。',
         ]);
 
-        $response->assertRedirect(route('books.show',$book));
+        $response->assertRedirect(route('books.show', $book));
 
         $response->assertSessionHas(
             'success',
             'レビューを更新しました。'
         );
     }
+
     public function test_other_user_cannot_update_a_review(): void
     {
         $userA = User::factory()->create();
@@ -121,11 +122,11 @@ class ReviewTest extends TestCase
         ];
 
         $response = $this->actingAs($userB)
-                    ->put(route('reviews.update',$review),$data);
+            ->put(route('reviews.update', $review), $data);
 
         $response->assertForbidden();
 
-        $this->assertDatabaseHas('reviews',[
+        $this->assertDatabaseHas('reviews', [
             'id' => $review->id,
             'user_id' => $userA->id,
             'book_id' => $originalreview['book_id'],
@@ -133,6 +134,7 @@ class ReviewTest extends TestCase
             'comment' => $originalreview['comment'],
         ]);
     }
+
     public function test_review_author_can_delete_a_review(): void
     {
         $user = User::factory()->create();
@@ -142,22 +144,23 @@ class ReviewTest extends TestCase
         ]);
 
         $response = $this->actingAs($user)
-                    ->delete(route('reviews.destroy',$review));
+            ->delete(route('reviews.destroy', $review));
 
-        $this->assertDatabaseMissing('reviews',[
+        $this->assertDatabaseMissing('reviews', [
             'id' => $review->id,
             'user_id' => $user->id,
         ]);
 
         $response->assertRedirect(
-            route('books.show',$review->book_id,)
-            );
+            route('books.show', $review->book_id)
+        );
 
         $response->assertSessionHas(
             'success',
             'レビューを削除しました。',
         );
     }
+
     public function test_other_user_cannot_delete_a_review(): void
     {
         $userA = User::factory()->create();
@@ -169,14 +172,15 @@ class ReviewTest extends TestCase
         ]);
 
         $response = $this->actingAs($userB)
-                    ->delete(route('reviews.destroy',$review));
+            ->delete(route('reviews.destroy', $review));
 
         $response->assertForbidden();
 
-        $this->assertDatabaseHas('reviews',[
+        $this->assertDatabaseHas('reviews', [
             'id' => $review->id,
         ]);
     }
+
     public function test_guest_cannot_create_a_review(): void
     {
         $book = Book::factory()->create();
@@ -186,12 +190,13 @@ class ReviewTest extends TestCase
             'comment' => 'ゲストからの投稿です。',
         ];
 
-        $response = $this->post(route('reviews.store',$book),$data);
+        $response = $this->post(route('reviews.store', $book), $data);
 
         $response->assertRedirect(route('login'));
 
         $this->assertDatabaseCount('reviews', 0);
     }
+
     public function test_guest_cannot_update_a_review(): void
     {
         $review = Review::factory()->create();
@@ -208,11 +213,11 @@ class ReviewTest extends TestCase
             'user_id' => $review->user_id,
         ];
 
-        $response = $this->put(route('reviews.update',$review),$data);
+        $response = $this->put(route('reviews.update', $review), $data);
 
         $response->assertRedirect(route('login'));
 
-        $this->assertDatabaseHas('reviews',[
+        $this->assertDatabaseHas('reviews', [
             'id' => $review->id,
             'user_id' => $originalReview['user_id'],
             'book_id' => $originalReview['book_id'],
@@ -220,15 +225,16 @@ class ReviewTest extends TestCase
             'comment' => $originalReview['comment'],
         ]);
     }
+
     public function test_guest_cannot_delete_a_review(): void
     {
         $review = Review::factory()->create();
 
-        $response = $this->delete(route('reviews.destroy',$review));
+        $response = $this->delete(route('reviews.destroy', $review));
 
         $response->assertRedirect(route('login'));
 
-        $this->assertDatabaseHas('reviews',[
+        $this->assertDatabaseHas('reviews', [
             'id' => $review->id,
         ]);
     }
@@ -245,11 +251,11 @@ class ReviewTest extends TestCase
         ];
 
         $response = $this->actingAs($user)
-                    ->post(route('reviews.store',$book),$data);
+            ->post(route('reviews.store', $book), $data);
 
         $response->assertSessionHasErrors('rating');
 
-        $this->assertDatabaseCount('reviews',0);
+        $this->assertDatabaseCount('reviews', 0);
     }
 
     public function test_user_cannot_create_review_without_comment(): void
@@ -264,11 +270,11 @@ class ReviewTest extends TestCase
         ];
 
         $response = $this->actingAs($user)
-                    ->post(route('reviews.store',$book),$data);
+            ->post(route('reviews.store', $book), $data);
 
         $response->assertSessionHasErrors('comment');
 
-        $this->assertDatabaseCount('reviews',0);
+        $this->assertDatabaseCount('reviews', 0);
     }
 
     public function test_user_cannot_update_review_with_invalid_rating(): void
@@ -292,13 +298,13 @@ class ReviewTest extends TestCase
         ];
 
         $response = $this->actingAs($user)
-                    ->put(route('reviews.update',$review),$data);
+            ->put(route('reviews.update', $review), $data);
 
         $response->assertSessionHasErrors('rating');
 
-        $this->assertDatabaseHas('reviews',[
+        $this->assertDatabaseHas('reviews', [
             'id' => $review->id,
-            'user_id' =>$originalReview['user_id'],
+            'user_id' => $originalReview['user_id'],
             'book_id' => $originalReview['book_id'],
             'rating' => $originalReview['rating'],
             'comment' => $originalReview['comment'],
@@ -326,13 +332,13 @@ class ReviewTest extends TestCase
         ];
 
         $response = $this->actingAs($user)
-                    ->put(route('reviews.update',$review),$data);
+            ->put(route('reviews.update', $review), $data);
 
         $response->assertSessionHasErrors('comment');
 
-        $this->assertDatabaseHas('reviews',[
+        $this->assertDatabaseHas('reviews', [
             'id' => $review->id,
-            'user_id' =>$originalReview['user_id'],
+            'user_id' => $originalReview['user_id'],
             'book_id' => $originalReview['book_id'],
             'rating' => $originalReview['rating'],
             'comment' => $originalReview['comment'],

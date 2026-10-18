@@ -23,7 +23,7 @@ return new class extends Migration
 
             $table->timestamps();
 
-            $table->unique(['user_id','review_id']);
+            $table->unique(['user_id', 'review_id']);
         });
     }
 

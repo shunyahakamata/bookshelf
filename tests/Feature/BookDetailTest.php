@@ -3,8 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\Book;
-use App\Models\User;
 use App\Models\Review;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -73,11 +73,11 @@ class BookDetailTest extends TestCase
         $this->get(route('books.show', $book))
             ->assertOk()
             ->assertViewHas('book', function ($book) use ($first, $second) {
-        return $book->reviews->pluck('id')->all() === [
-            $first->id,
-            $second->id,
-            ];
-        });
+                return $book->reviews->pluck('id')->all() === [
+                    $first->id,
+                    $second->id,
+                ];
+            });
     }
 
     public function test_user_without_review_can_see_review_form(): void

@@ -17,7 +17,7 @@ class UserSeeder extends Seeder
             ['email' => 'yamada@example.com'],
             [
                 'name' => '山田太郎',
-                'password' => Hash::make('password')
+                'password' => Hash::make('password'),
             ]
         );
 
@@ -25,7 +25,7 @@ class UserSeeder extends Seeder
             ['email' => 'suzuki@example.com'],
             [
                 'name' => '鈴木花子',
-                'password' => Hash::make('password')
+                'password' => Hash::make('password'),
             ]
         );
 
@@ -33,7 +33,7 @@ class UserSeeder extends Seeder
             ['email' => 'tanaka@example.com'],
             [
                 'name' => '田中一郎',
-                'password' => Hash::make('password')
+                'password' => Hash::make('password'),
             ]
         );
 
@@ -41,7 +41,7 @@ class UserSeeder extends Seeder
             ['email' => 'sato@example.com'],
             [
                 'name' => '佐藤美咲',
-                'password' => Hash::make('password')
+                'password' => Hash::make('password'),
             ]
         );
 
@@ -49,7 +49,7 @@ class UserSeeder extends Seeder
             ['email' => 'takahashi@example.com'],
             [
                 'name' => '高橋健太',
-                'password' => Hash::make('password')
+                'password' => Hash::make('password'),
             ]
         );
     }

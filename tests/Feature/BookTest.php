@@ -2,15 +2,16 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use App\Models\Genre;
 use App\Models\Book;
+use App\Models\Genre;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class BookTest extends TestCase
 {
     use RefreshDatabase;
+
     /**
      * A basic feature test example.
      */
@@ -29,7 +30,7 @@ class BookTest extends TestCase
         ];
 
         $response = $this->actingAs($user)
-            ->post('/books',$data);
+            ->post('/books', $data);
 
         $this->assertDatabaseHas('books', [
             'title' => 'テスト本',
@@ -74,7 +75,7 @@ class BookTest extends TestCase
 
         $this->assertDatabaseMissing('books', [
             'isbn' => '123456789012',
-        ]);     
+        ]);
     }
 
     public function test_book_cannot_be_created_when_isbn_is_duplicated(): void
@@ -95,7 +96,7 @@ class BookTest extends TestCase
 
         $response = $this->actingAs($user)
             ->post('/books', $data);
-        
+
         $response->assertSessionHasErrors('isbn');
 
         $this->assertDatabaseCount('books', 1);
@@ -167,7 +168,7 @@ class BookTest extends TestCase
 
     public function test_user_cannot_update_another_users_book(): void
     {
-    
+
         $user = User::factory()->create();
         $otherUser = User::factory()->create();
 
@@ -298,7 +299,7 @@ class BookTest extends TestCase
             'genres' => [$genre->id],
         ];
 
-        $response = $this->put(route('books.update', $book),$data);
+        $response = $this->put(route('books.update', $book), $data);
 
         $response->assertRedirect(route('login'));
 
@@ -308,6 +309,7 @@ class BookTest extends TestCase
             'isbn' => $book->isbn,
         ]);
     }
+
     public function test_book_owner_can_delete_a_book(): void
     {
         $user = User::factory()->create();
@@ -317,9 +319,9 @@ class BookTest extends TestCase
         ]);
 
         $response = $this->actingAs($user)
-                    ->delete(route('books.destroy', $book));
+            ->delete(route('books.destroy', $book));
 
-        $this->assertDatabaseMissing('books',[
+        $this->assertDatabaseMissing('books', [
             'id' => $book->id,
         ]);
 
@@ -342,7 +344,7 @@ class BookTest extends TestCase
         ]);
 
         $response = $this->actingAs($user)
-                    ->delete(route('books.destroy', $book));
+            ->delete(route('books.destroy', $book));
 
         $response->assertForbidden();
 

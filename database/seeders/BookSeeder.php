@@ -34,7 +34,7 @@ class BookSeeder extends Seeder
                 'published_date' => '1936-10-01',
                 'description' => '人間関係を築くための基本原則や、人から信頼され協力を得るための考え方を紹介する自己啓発書。',
                 'image_url' => 'https://placehold.co/200x300/e2e8f0/475569?text=2',
-                'genres' => ['ビジネス','自己啓発'],
+                'genres' => ['ビジネス', '自己啓発'],
             ],
 
             [
@@ -54,7 +54,7 @@ class BookSeeder extends Seeder
                 'published_date' => '2013-08-30',
                 'description' => '主体性や目標設定、人間関係などをテーマに、より良い人生を築くための原則を体系的に紹介した自己啓発書。',
                 'image_url' => 'https://placehold.co/200x300/e2e8f0/475569?text=4',
-                'genres' => ['ビジネス','自己啓発'],
+                'genres' => ['ビジネス', '自己啓発'],
             ],
 
             [
@@ -74,7 +74,7 @@ class BookSeeder extends Seeder
                 'published_date' => '2016-09-08',
                 'description' => '人類の誕生から現代社会に至るまでの歴史を、認知革命や農業革命などの大きな変化を通して考察した歴史書。',
                 'image_url' => 'https://placehold.co/200x300/e2e8f0/475569?text=6',
-                'genres' => ['歴史','科学'],
+                'genres' => ['歴史', '科学'],
             ],
 
             [
@@ -86,7 +86,7 @@ class BookSeeder extends Seeder
                 'image_url' => 'https://placehold.co/200x300/e2e8f0/475569?text=7',
                 'genres' => ['技術書'],
             ],
-            
+
             [
                 'title' => '嫌われる勇気',
                 'author' => '岸見一郎・古賀史健',
@@ -114,7 +114,7 @@ class BookSeeder extends Seeder
                 'published_date' => '2019-01-11',
                 'description' => '世界を正しく理解するために、思い込みや先入観を避け、データに基づいて物事を見ることの重要性を解説した書籍。',
                 'image_url' => 'https://placehold.co/200x300/e2e8f0/475569?text=10',
-                'genres' => ['ビジネス','科学'],
+                'genres' => ['ビジネス', '科学'],
             ],
 
             [
@@ -124,7 +124,7 @@ class BookSeeder extends Seeder
                 'published_date' => '2007-01-18',
                 'description' => '海上輸送用コンテナの普及が物流や貿易、世界経済に与えた大きな変化を歴史的な視点から描いた書籍。',
                 'image_url' => 'https://placehold.co/200x300/e2e8f0/475569?text=11',
-                'genres' => ['ビジネス','歴史'],
+                'genres' => ['ビジネス', '歴史'],
             ],
         ];
 
@@ -147,6 +147,5 @@ class BookSeeder extends Seeder
             $book->genres()->sync($genreIds);
         }
 
-        
     }
 }

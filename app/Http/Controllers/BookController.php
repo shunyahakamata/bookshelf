@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Book;
-use App\Models\Genre;
-
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
+use App\Models\Book;
+use App\Models\Genre;
 
 class BookController extends Controller
 {
@@ -26,8 +25,8 @@ class BookController extends Controller
             'genres',
             'reviews' => function ($query) {
                 $query->orderBy('rating', 'desc')
-                      ->orderBy('created_at', 'desc')
-                      ->orderBy('id', 'asc');
+                    ->orderBy('created_at', 'desc')
+                    ->orderBy('id', 'asc');
             },
             'reviews.user',
             'reviews.likedByUsers',
@@ -56,7 +55,7 @@ class BookController extends Controller
 
         $book = Book::create($data);
 
-        $genres = $request->validated('genres',[]);
+        $genres = $request->validated('genres', []);
 
         $book->genres()->sync($genres);
 
@@ -67,35 +66,35 @@ class BookController extends Controller
 
     public function edit(Book $book)
     {
-        $this->authorize('update',$book);
+        $this->authorize('update', $book);
 
         $genres = Genre::all();
 
         $book->load('genres');
 
-        return view('books.edit',compact('book','genres'));
+        return view('books.edit', compact('book', 'genres'));
     }
 
     public function update(UpdateBookRequest $request, Book $book)
     {
-        $this->authorize('update',$book);
+        $this->authorize('update', $book);
 
         $data = $request->safe()->except('genres');
 
         $book->update($data);
 
-        $genres = $request->validated('genres',[]);
+        $genres = $request->validated('genres', []);
 
         $book->genres()->sync($genres);
 
         return redirect()
-            ->route('books.show',$book)
+            ->route('books.show', $book)
             ->with('success', '書籍を更新しました。');
     }
 
     public function destroy(Book $book)
     {
-        $this->authorize('delete' ,$book);
+        $this->authorize('delete', $book);
 
         $book->delete();
 

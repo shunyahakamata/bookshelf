@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Resources\Api\V1\BookResource;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\IndexBookRequest;
+use App\Http\Resources\Api\V1\BookResource;
 use App\Models\Book;
 
 class BookController extends Controller

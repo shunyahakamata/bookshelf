@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreGenreRequest;
 use App\Http\Requests\UpdateGenreRequest;
-
 use App\Models\Genre;
 
 class GenreController extends Controller
@@ -22,7 +21,7 @@ class GenreController extends Controller
             ->with('genres')
             ->paginate(10);
 
-        return view('genres.show',compact('genre','books'));
+        return view('genres.show', compact('genre', 'books'));
     }
 
     public function create()
@@ -38,12 +37,12 @@ class GenreController extends Controller
 
         return redirect()
             ->route('genres.index')
-            ->with('success','ジャンルを登録しました。');
+            ->with('success', 'ジャンルを登録しました。');
     }
 
     public function edit(Genre $genre)
     {
-        return view('genres.edit',compact('genre'));
+        return view('genres.edit', compact('genre'));
     }
 
     public function update(UpdateGenreRequest $request, Genre $genre)
@@ -54,21 +53,21 @@ class GenreController extends Controller
 
         return redirect()
             ->route('genres.index')
-            ->with('success','ジャンルを更新しました。');
+            ->with('success', 'ジャンルを更新しました。');
     }
 
     public function destroy(Genre $genre)
     {
-        if($genre->books()->exists()){
+        if ($genre->books()->exists()) {
             return redirect()
                 ->route('genres.index')
-                ->with('error','ジャンルを削除できませんでした。');
+                ->with('error', 'ジャンルを削除できませんでした。');
         }
 
         $genre->delete();
 
         return redirect()
             ->route('genres.index')
-            ->with('success','ジャンルを削除しました。');
+            ->with('success', 'ジャンルを削除しました。');
     }
 }

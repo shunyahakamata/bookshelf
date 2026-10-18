@@ -72,20 +72,20 @@ class FavoriteTest extends TestCase
     }
 
     public function test_favorite_list_displays_ten_books_per_page(): void
-{
-    $user = User::factory()->create();
+    {
+        $user = User::factory()->create();
 
-    $books = Book::factory()->count(11)->create();
+        $books = Book::factory()->count(11)->create();
 
-    $user->favoriteBooks()->attach($books->pluck('id')->all());
+        $user->favoriteBooks()->attach($books->pluck('id')->all());
 
-    $this->actingAs($user)
-        ->get(route('favorites.index'))
-        ->assertOk()
-        ->assertViewHas('books', function ($favoriteBooks) {
-            return $favoriteBooks->count() === 10
-                && $favoriteBooks->total() === 11
-                && $favoriteBooks->lastPage() === 2;
-        });
-}
+        $this->actingAs($user)
+            ->get(route('favorites.index'))
+            ->assertOk()
+            ->assertViewHas('books', function ($favoriteBooks) {
+                return $favoriteBooks->count() === 10
+                    && $favoriteBooks->total() === 11
+                    && $favoriteBooks->lastPage() === 2;
+            });
+    }
 }

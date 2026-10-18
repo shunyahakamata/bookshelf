@@ -20,7 +20,7 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete();
 
-            $table->primary(['book_id','genre_id']);
+            $table->primary(['book_id', 'genre_id']);
         });
     }
 

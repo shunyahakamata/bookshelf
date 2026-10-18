@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Models\Book;
+use App\Models\Genre;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\User;
-use App\Models\Genre;
-use App\Models\Book;
 
 class GenreTest extends TestCase
 {
@@ -19,10 +19,10 @@ class GenreTest extends TestCase
         $data = ['name' => 'テストジャンル'];
 
         $response = $this->actingAs($user)
-                    ->post(route('genres.store'),$data);
+            ->post(route('genres.store'), $data);
 
-        $this->assertDatabaseHas('genres',[
-            'name' => 'テストジャンル'
+        $this->assertDatabaseHas('genres', [
+            'name' => 'テストジャンル',
         ]);
 
         $response->assertRedirect(route('genres.index'));
@@ -60,11 +60,11 @@ class GenreTest extends TestCase
         $data = ['name' => '更新したジャンル'];
 
         $response = $this->actingAs($user)
-                    ->put(route('genres.update',$genre),$data);
+            ->put(route('genres.update', $genre), $data);
 
-        $this->assertDatabaseHas('genres',[
+        $this->assertDatabaseHas('genres', [
             'id' => $genre->id,
-            'name' => '更新したジャンル'
+            'name' => '更新したジャンル',
         ]);
 
         $response->assertRedirect(route('genres.index'));
@@ -86,9 +86,9 @@ class GenreTest extends TestCase
         ];
 
         $response = $this->actingAs($user)
-                    ->put(route('genres.update',$genre),$data);
+            ->put(route('genres.update', $genre), $data);
 
-        $this->assertDatabaseHas('genres',[
+        $this->assertDatabaseHas('genres', [
             'id' => $genre->id,
             'name' => $genre->name,
         ]);
@@ -111,11 +111,11 @@ class GenreTest extends TestCase
         ];
 
         $response = $this->actingAs($user)
-            ->put(route('genres.update',$genre),$data);
+            ->put(route('genres.update', $genre), $data);
 
         $response->assertSessionHasErrors('name');
 
-        $this->assertDatabaseHas('genres',[
+        $this->assertDatabaseHas('genres', [
             'id' => $genre->id,
             'name' => $originalName,
         ]);
@@ -128,9 +128,9 @@ class GenreTest extends TestCase
         $genre = Genre::factory()->create();
 
         $response = $this->actingAs($user)
-                    ->delete(route('genres.destroy',$genre));
+            ->delete(route('genres.destroy', $genre));
 
-        $this->assertDatabaseMissing('genres',[
+        $this->assertDatabaseMissing('genres', [
             'id' => $genre->id,
         ]);
 
@@ -153,17 +153,17 @@ class GenreTest extends TestCase
         $book->genres()->attach($genre->id);
 
         $response = $this->actingAs($user)
-                ->delete(route('genres.destroy',$genre));
+            ->delete(route('genres.destroy', $genre));
 
-        $this->assertDatabaseHas('genres',[
-           'id' => $genre->id,
+        $this->assertDatabaseHas('genres', [
+            'id' => $genre->id,
         ]);
 
         $response->assertRedirect(route('genres.index'));
 
         $response->assertSessionHas(
-           'error',
-           'ジャンルを削除できませんでした。'
+            'error',
+            'ジャンルを削除できませんでした。'
         );
     }
 }

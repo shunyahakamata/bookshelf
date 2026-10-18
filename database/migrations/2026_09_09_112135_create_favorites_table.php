@@ -22,7 +22,7 @@ return new class extends Migration
                 ->cascadeOnDelete();
             $table->timestamps();
 
-            $table->unique(['user_id','book_id']);
+            $table->unique(['user_id', 'book_id']);
         });
     }
 
