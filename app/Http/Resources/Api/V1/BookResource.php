@@ -20,8 +20,6 @@ class BookResource extends JsonResource
             'author' => $this->author,
             'isbn' => $this->isbn,
             'published_date' => $this->published_date,
-            'description' => $this->description,
-            'image_url' => $this->image_url,
 
             'genres' => $this->whenLoaded('genres', function () {
                 return $this->genres->map(function ($genre) {
@@ -33,9 +31,9 @@ class BookResource extends JsonResource
             }),
 
             'average_rating' => $this->reviews_avg_rating === null
-    ? null
-    : (float) $this->reviews_avg_rating,
-            'reviews_count' => $this->reviews_count,
+            ? null
+            : (float) $this->reviews_avg_rating,
+            'review_count' => $this->reviews_count,
         ];
     }
 }

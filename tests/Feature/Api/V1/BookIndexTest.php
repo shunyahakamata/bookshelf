@@ -225,16 +225,18 @@ class BookIndexTest extends TestCase
                     'author',
                     'isbn',
                     'published_date',
-                    'description',
-                    'image_url',
                     'genres',
                     'average_rating',
-                    'reviews_count',
+                    'review_count',
                 ],
             ],
             'links',
             'meta',
         ]);
+
+        $response->assertJsonMissingPath('data.0.description');
+
+        $response->assertJsonMissingPath('data.0.image_url');
     }
 
     public function test_books_index_returns_book_genres(): void
@@ -282,7 +284,7 @@ class BookIndexTest extends TestCase
 
         $response->assertJsonPath('data.0.id', $book->id);
 
-        $response->assertJsonPath('data.0.reviews_count', 2);
+        $response->assertJsonPath('data.0.review_count', 2);
 
         $this->assertSame(
             4.5,
@@ -302,7 +304,7 @@ class BookIndexTest extends TestCase
 
         $response->assertJsonPath('data.0.id', $book->id);
 
-        $response->assertJsonPath('data.0.reviews_count', 0);
+        $response->assertJsonPath('data.0.review_count', 0);
 
         $response->assertJsonPath('data.0.average_rating', null);
     }
