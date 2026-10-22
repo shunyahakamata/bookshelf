@@ -33,5 +33,6 @@ return [
         'rating' => '評価',
         'comment' => 'コメント',
         'password' => 'パスワード',
+        'user_id' => 'ユーザーID',
     ],
 ];
