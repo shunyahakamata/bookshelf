@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\IndexBookRequest;
 use App\Http\Requests\Api\StoreBookRequest;
+use App\Http\Requests\Api\UpdateBookRequest;
 use App\Http\Resources\Api\V1\BookDetailResource;
 use App\Http\Resources\Api\V1\BookResource;
 use App\Models\Book;
@@ -64,5 +65,20 @@ class BookController extends Controller
         return (new BookDetailResource($book))
             ->response()
             ->setStatusCode(201);
+    }
+
+    public function update(UpdateBookRequest $request, Book $book)
+    {
+        $data = $request->safe()->except('genres');
+
+        $book->update($data);
+
+        $genres = $request->validated('genres', []);
+
+        $book->genres()->sync($genres);
+
+        $book->load(['genres', 'reviews.user']);
+
+        return new BookDetailResource($book);
     }
 }
