@@ -81,4 +81,11 @@ class BookController extends Controller
 
         return new BookDetailResource($book);
     }
+
+    public function destroy(Book $book)
+    {
+        $book->delete();
+
+        return response()->noContent();
+    }
 }
