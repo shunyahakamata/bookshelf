@@ -208,17 +208,25 @@ class ReviewSeeder extends Seeder
                 'comment' => '身近に見かけるコンテナが世界経済に与えた影響の大きさに驚きました。',
             ],
         ];
-        foreach ($reviews as $reviewData) {
-            $user = User::where('email', $reviewData['user_email'])->first();
+        $groupedReviews = collect($reviews)->groupBy('book_isbn');
 
-            $book = Book::where('isbn', $reviewData['book_isbn'])->first();
+        foreach ($groupedReviews as $bookReviews) {
+            $selectedReviews = $bookReviews
+                ->shuffle()
+                ->take(random_int(2, min(4, $bookReviews->count())));
 
-            Review::create([
-                'user_id' => $user->id,
-                'book_id' => $book->id,
-                'rating' => $reviewData['rating'],
-                'comment' => $reviewData['comment'],
-            ]);
+            foreach ($selectedReviews as $reviewData) {
+                $user = User::where('email', $reviewData['user_email'])->firstOrFail();
+
+                $book = Book::where('isbn', $reviewData['book_isbn'])->firstOrFail();
+
+                Review::create([
+                    'user_id' => $user->id,
+                    'book_id' => $book->id,
+                    'rating' => random_int(1, 5),
+                    'comment' => $reviewData['comment'],
+                ]);
+            }
         }
     }
 }

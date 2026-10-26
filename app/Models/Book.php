@@ -19,6 +19,10 @@ class Book extends Model
         'user_id',
     ];
 
+    protected $casts = [
+        'published_date' => 'date',
+    ];
+
     public function genres()
     {
         return $this->belongsToMany(Genre::class);
@@ -34,4 +38,9 @@ class Book extends Model
         return $this->belongsToMany(User::class, 'favorites')
             ->withTimestamps();
     }
+
+    public function readingPlans()
+    {
+        return $this->hasMany(ReadingPlan::class);
+    } 
 }

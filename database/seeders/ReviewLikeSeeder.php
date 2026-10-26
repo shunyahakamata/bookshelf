@@ -208,6 +208,10 @@ class ReviewLikeSeeder extends Seeder
                 ->where('book_id', $book->id)
                 ->first();
 
+            if (!$review) {
+                continue;
+            }
+
             $likeUserIds = User::whereIn(
                 'email',
                 $reviewLikeData['like_user_emails']
