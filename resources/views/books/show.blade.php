@@ -59,16 +59,8 @@
                             </div>
 
                             <p class="text-gray-600 mb-2"><strong>著者:</strong> {{ $book->author }}</p>
-                            <p class="text-gray-600 mb-2">
-                                <strong>平均評価:</strong>
-                                @if($book->reviews_avg_rating !== null)
-                                    {{ number_format($book->reviews_avg_rating, 1) }}
-                                @else
-                                    評価なし
-                                @endif
-                            </p>
-                            <p class="text-gray-600 mb-2"><strong>ISBN:</strong> {{ $book->isbn }}</p>
-                            <p class="text-gray-600 mb-2"><strong>出版日:</strong> {{ $book->published_date }}</p>
+                            <p class="text-gray-600 mb-2"><strong>ISBN:</strong> {{ $book->isbn ?? '未登録' }}</p>
+                            <p class="text-gray-600 mb-2"><strong>出版日:</strong> {{ $book->published_date?->format('Y-m-d') ?? '未登録' }}</p>
                             <div class="mb-4">
                                 <strong>ジャンル:</strong>
                                 @foreach($book->genres as $genre)
@@ -106,19 +98,13 @@
                         <h2 class="text-xl font-bold mb-4">レビュー</h2>
 
                         @auth
-                            @if(!$hasReviewed)
                             <!-- レビュー投稿フォーム -->
                             <div class="mb-6 bg-gray-50 p-4 rounded-lg">
                                 <h3 class="font-semibold mb-3">レビューを投稿</h3>
-                                @error('review')
-                                    <p class="text-sm text-red-600 mb-3">{{$message}}</p>
-                                @enderror
                                 <form action="{{ route('reviews.store', $book) }}" method="POST" novalidate>
                                     @csrf
                                     <div class="mb-4">
-                                        <label for="rating" class="block text-sm font-medium text-gray-700 mb-1">
-                                            評価<span class="text-red-500">*</span>
-                                        </label>
+                                        <label for="rating" class="block text-sm font-medium text-gray-700 mb-1">評価</label>
                                         <select name="rating" id="rating" class="border-gray-300 rounded-md shadow-sm">
                                             <option value="">選択してください</option>
                                             @for($i = 5; $i >= 1; $i--)
@@ -132,11 +118,10 @@
                                         @enderror
                                     </div>
                                     <div class="mb-4">
-                                        <label for="comment" class="block text-sm font-medium text-gray-700 mb-1">コメント <span class="text-red-500">*</span></label>
-                                            <textarea name="comment" id="comment" rows="3"
-                                                class="border-gray-300 rounded-md shadow-sm w-full"
-                                                placeholder="この書籍の感想を書いてください"
-                                                required>{{ old('comment') }}</textarea>   
+                                        <label for="comment" class="block text-sm font-medium text-gray-700 mb-1">コメント</label>
+                                        <textarea name="comment" id="comment" rows="3"
+                                            class="border-gray-300 rounded-md shadow-sm w-full"
+                                            placeholder="この書籍の感想を書いてください">{{ old('comment') }}</textarea>
                                         @error('comment')
                                             <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                                         @enderror
@@ -148,11 +133,6 @@
                                     </div>
                                 </form>
                             </div>
-                            @else
-                                <p class="mb-6 text-gray-600">
-                                    この書籍にはすでにレビューを投稿しています。
-                                </p>
-                             @endif
                         @else
                             <p class="mb-6 text-gray-600">
                                 レビューを投稿するには<a href="{{ route('login') }}" class="text-blue-600 hover:underline">ログイン</a>してください。
