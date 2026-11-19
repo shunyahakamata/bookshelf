@@ -6,17 +6,58 @@ use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use App\Models\Book;
 use App\Models\Genre;
+use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $keyword = $request->query('keyword');
+
+        $genre = $request->query('genre');
+
+        $sort = $request->query('sort', 'newest');
+
         $books = Book::with('genres')
             ->withAvg('reviews', 'rating')
-            ->latest()
-            ->paginate(10);
+            ->when($keyword, function ($query) use ($keyword) {
+                $query->where(function ($query) use ($keyword) {
+                    $query->where('title', 'like', '%'.$keyword.'%')
+                        ->orWhere('author', 'like', '%'.$keyword.'%');
+                });
+            })
+            ->when($genre, function ($query) use ($genre) {
+                $query->whereHas('genres', function ($query) use ($genre) {
+                    $query->where('genres.id', $genre);
+                });
+            });
 
-        return view('books.index', compact('books'));
+        switch ($sort) {
+            case 'oldest':
+                $books->orderBy('created_at', 'asc');
+                break;
+
+            case 'rating':
+                $books->orderByDesc('reviews_avg_rating');
+                break;
+
+            case 'title':
+                $books->orderBy('title', 'asc');
+                break;
+
+            default:
+                $books->latest();
+                break;
+        }
+
+        $books = $books
+            ->orderBy('id', 'asc')
+            ->paginate(10)
+            ->withQueryString();
+
+        $genres = Genre::all();
+
+        return view('books.index', compact('books', 'genres'));
     }
 
     public function show(Book $book)
