@@ -34,4 +34,3 @@ class ReadingPlan extends Model
         return $this->belongsTo(Book::class);
     }
 }
-

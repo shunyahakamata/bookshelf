@@ -208,7 +208,7 @@ class ReviewLikeSeeder extends Seeder
                 ->where('book_id', $book->id)
                 ->first();
 
-            if (!$review) {
+            if (! $review) {
                 continue;
             }
 

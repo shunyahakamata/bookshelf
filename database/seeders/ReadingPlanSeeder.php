@@ -77,4 +77,3 @@ class ReadingPlanSeeder extends Seeder
         }
     }
 }
-

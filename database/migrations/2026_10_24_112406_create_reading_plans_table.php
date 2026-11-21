@@ -9,29 +9,29 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-public function up(): void
-{
-    Schema::create('reading_plans', function (Blueprint $table) {
-        $table->id();
+    public function up(): void
+    {
+        Schema::create('reading_plans', function (Blueprint $table) {
+            $table->id();
 
-        $table->foreignId('user_id')
-            ->constrained()
-            ->cascadeOnDelete();
+            $table->foreignId('user_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
-        $table->foreignId('book_id')
-            ->constrained()
-            ->cascadeOnDelete();
+            $table->foreignId('book_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
-        $table->date('target_date');
+            $table->date('target_date');
 
-        $table->string('status')
-            ->default('in_progress');
+            $table->string('status')
+                ->default('in_progress');
 
-        $table->timestamp('completed_at')->nullable();
+            $table->timestamp('completed_at')->nullable();
 
-        $table->timestamps();
-    });
-}
+            $table->timestamps();
+        });
+    }
 
     /**
      * Reverse the migrations.
