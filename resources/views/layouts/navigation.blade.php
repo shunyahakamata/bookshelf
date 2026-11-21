@@ -33,18 +33,23 @@
                     <x-nav-link :href="route('genres.index')" :active="request()->routeIs('genres.*')">
                         {{ __('ジャンル管理') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.*')">
-                        {{ __('マイレポート') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('reading-plans.index')" :active="request()->routeIs('reading-plans.*')">
-                        {{ __('読書計画') }}
-                    </x-nav-link>
+                    @if (Route::has('reports.index'))
+                        <x-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.*')">
+                            {{ __('マイレポート') }}
+                        </x-nav-link>
+                    @endif
+                    @if (Route::has('reading-plans.index'))
+                        <x-nav-link :href="route('reading-plans.index')" :active="request()->routeIs('reading-plans.*')">
+                            {{ __('読書計画') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 @auth
+                @if (Route::has('notifications.index'))
                     <!-- 通知ベルアイコン -->
                     <a href="{{ route('notifications.index') }}" class="relative inline-flex items-center px-3 py-2 text-gray-500 hover:text-gray-700">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -54,6 +59,7 @@
                             <span class="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-red-600 rounded-full">{{ $unreadNotificationCount }}</span>
                         @endif
                     </a>
+                @endif
 
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
@@ -116,16 +122,22 @@
             <x-responsive-nav-link :href="route('genres.index')" :active="request()->routeIs('genres.*')">
                 {{ __('ジャンル管理') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.*')">
-                {{ __('マイレポート') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('reading-plans.index')" :active="request()->routeIs('reading-plans.*')">
-                {{ __('読書計画') }}
-            </x-responsive-nav-link>
+                @if (Route::has('reports.index'))
+                    <x-responsive-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.*')">
+                        {{ __('マイレポート') }}
+                    </x-responsive-nav-link>
+                @endif
+                @if (Route::has('reading-plans.index'))
+                    <x-responsive-nav-link :href="route('reading-plans.index')" :active="request()->routeIs('reading-plans.*')">
+                        {{ __('読書計画') }}
+                    </x-responsive-nav-link>
+                @endif
             @auth
-                <x-responsive-nav-link :href="route('notifications.index')" :active="request()->routeIs('notifications.*')">
-                    {{ __('通知') }}@if($unreadNotificationCount > 0) <span class="ml-2 inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-red-600 rounded-full">{{ $unreadNotificationCount }}</span>@endif
-                </x-responsive-nav-link>
+                @if (Route::has('notifications.index'))
+                    <x-responsive-nav-link :href="route('notifications.index')" :active="request()->routeIs('notifications.*')">
+                        {{ __('通知') }}@if($unreadNotificationCount > 0) <span class="ml-2 inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-red-600 rounded-full">{{ $unreadNotificationCount }}</span>@endif
+                    </x-responsive-nav-link>
+                @endif
             @endauth
         </div>
 
