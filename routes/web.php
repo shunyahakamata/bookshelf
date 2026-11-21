@@ -27,6 +27,9 @@ Route::get('/ranking', [RankingController::class, 'index'])
 
 Route::middleware('auth')->group(function () {
 
+    Route::get('/books/isbn/{isbn}', [BookController::class, 'fetchByIsbn'])
+        ->name('books.fetchByIsbn');
+
     Route::resource('books', BookController::class)
         ->except(['index', 'show']);
 

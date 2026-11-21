@@ -86,14 +86,18 @@
                     document.getElementById('author').value = data.author || '';
                     document.getElementById('isbn').value = isbn;
                     document.getElementById('description').value = data.description || '';
-                    document.getElementById('image_url').value = data.image_url || '';
+                    document.getElementById('image_url').value = data.image_url || '';const publishedDateEl = document.getElementById('published_date');
 
-                    if (data.published_date) {
-                        const date = new Date(data.published_date);
-                        if (!isNaN(date)) {
-                            document.getElementById('published_date').value = date.toISOString().split('T')[0];
-                        }
-                    }
+publishedDateEl.value = '';
+
+if (data.published_date) {
+    const date = data.published_date;
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+        publishedDateEl.value = date;
+    }
+}
+
 
                     successEl.textContent = '書籍情報を取得しました。';
                     successEl.classList.remove('hidden');
