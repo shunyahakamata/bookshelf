@@ -71,33 +71,33 @@
             labelEl.textContent = '検索中...';
 
             try {
-                const response = await fetch(`/books/isbn/${isbn}`, {
+                const response = await fetch(`/books/isbn/${encodeURIComponent(isbn)}`, {
                     headers: {
                         'Accept': 'application/json',
                     },
                 });
                 const data = await response.json();
 
-                if (data.error) {
-                    errorEl.textContent = data.error;
+                if (!response.ok || data.error) {
+                    errorEl.textContent = data.error || '書籍情報の取得に失敗しました。';
                     errorEl.classList.remove('hidden');
                 } else {
                     document.getElementById('title').value = data.title || '';
                     document.getElementById('author').value = data.author || '';
                     document.getElementById('isbn').value = isbn;
                     document.getElementById('description').value = data.description || '';
-                    document.getElementById('image_url').value = data.image_url || '';const publishedDateEl = document.getElementById('published_date');
+                    document.getElementById('image_url').value = data.image_url || '';
 
-publishedDateEl.value = '';
+                    const publishedDateEl = document.getElementById('published_date');
+                    publishedDateEl.value = '';
 
-if (data.published_date) {
-    const date = data.published_date;
+                    if (data.published_date) {
+                        const date = data.published_date;
 
-    if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-        publishedDateEl.value = date;
-    }
-}
-
+                        if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+                            publishedDateEl.value = date;
+                        }
+                    }
 
                     successEl.textContent = '書籍情報を取得しました。';
                     successEl.classList.remove('hidden');

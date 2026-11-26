@@ -9,20 +9,26 @@ use App\Http\Requests\Api\UpdateBookRequest;
 use App\Http\Resources\Api\V1\BookDetailResource;
 use App\Http\Resources\Api\V1\BookResource;
 use App\Models\Book;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 
 class BookController extends Controller
 {
-    public function index(IndexBookRequest $request)
+    public function index(IndexBookRequest $request): AnonymousResourceCollection
     {
         $keyword = $request->validated('keyword');
         $genreId = $request->validated('genre_id');
         $perPage = $request->validated('per_page', 20);
 
+        /** @var LengthAwarePaginator $books */
         $books = Book::query()
             ->with('genres')
             ->withAvg('reviews', 'rating')
             ->withCount('reviews')
-            ->when($keyword, function ($query) use ($keyword) {
+            ->when($request->filled('keyword'), function ($query) use ($keyword) {
                 $query->where(function ($query) use ($keyword) {
                     $query->where('title', 'like', "%{$keyword}%")
                         ->orWhere('author', 'like', "%{$keyword}%");
@@ -34,13 +40,14 @@ class BookController extends Controller
                 });
             })
             ->latest()
-            ->paginate($perPage)
-            ->withQueryString();
+            ->paginate($perPage);
+
+        $books->withQueryString();
 
         return BookResource::collection($books);
     }
 
-    public function show(Book $book)
+    public function show(Book $book): BookDetailResource
     {
         $book->load([
             'genres',
@@ -50,15 +57,20 @@ class BookController extends Controller
         return new BookDetailResource($book);
     }
 
-    public function store(StoreBookRequest $request)
+    public function store(StoreBookRequest $request): JsonResponse
     {
         $data = $request->safe()->except('genres');
-
-        $book = Book::create($data);
+        $data['user_id'] = $request->user()->id;
 
         $genres = $request->validated('genres', []);
 
-        $book->genres()->sync($genres);
+        $book = DB::transaction(function () use ($data, $genres) {
+            $book = Book::create($data);
+
+            $book->genres()->sync($genres);
+
+            return $book;
+        });
 
         $book->load('genres');
 
@@ -67,23 +79,27 @@ class BookController extends Controller
             ->setStatusCode(201);
     }
 
-    public function update(UpdateBookRequest $request, Book $book)
+    public function update(UpdateBookRequest $request, Book $book): BookDetailResource
     {
         $data = $request->safe()->except('genres');
 
-        $book->update($data);
-
         $genres = $request->validated('genres', []);
 
-        $book->genres()->sync($genres);
+        DB::transaction(function () use ($book, $data, $genres) {
+            $book->update($data);
+
+            $book->genres()->sync($genres);
+        });
 
         $book->load(['genres', 'reviews.user']);
 
         return new BookDetailResource($book);
     }
 
-    public function destroy(Book $book)
+    public function destroy(Book $book): Response
     {
+        $this->authorize('delete', $book);
+
         $book->delete();
 
         return response()->noContent();

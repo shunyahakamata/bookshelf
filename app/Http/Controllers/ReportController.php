@@ -2,18 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class ReportController extends Controller
 {
-    public function index()
+    /**
+     * ログインユーザーのレビューを集計し、読書レポートを表示する。
+     */
+    public function index(): View
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = Auth::user();
 
-
         $ratingDistribution = collect(range(1, 5))->map(
-            fn($rating) => $user->reviews()
+            fn ($rating) => $user->reviews()
                 ->where('rating', $rating)
                 ->count()
         );
@@ -75,7 +79,6 @@ class ReportController extends Controller
             'top_rated_books' => $topRatedBooks,
             'genre_ratings' => $genreRatings,
         ];
-
 
         return view('reports.index', compact('stats'));
     }

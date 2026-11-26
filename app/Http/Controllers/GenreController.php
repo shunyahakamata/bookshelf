@@ -5,17 +5,21 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreGenreRequest;
 use App\Http\Requests\UpdateGenreRequest;
 use App\Models\Genre;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class GenreController extends Controller
 {
-    public function index()
+    /** ジャンル一覧を表示する。 */
+    public function index(): View
     {
         $genres = Genre::withCount('books')->get();
 
         return view('genres.index', compact('genres'));
     }
 
-    public function show(Genre $genre)
+    /** ジャンルに属する書籍一覧を表示する。 */
+    public function show(Genre $genre): View
     {
         $books = $genre->books()
             ->with('genres')
@@ -24,12 +28,14 @@ class GenreController extends Controller
         return view('genres.show', compact('genre', 'books'));
     }
 
-    public function create()
+    /** ジャンルの登録画面を表示する。 */
+    public function create(): View
     {
         return view('genres.create');
     }
 
-    public function store(StoreGenreRequest $request)
+    /** ジャンルを登録する。 */
+    public function store(StoreGenreRequest $request): RedirectResponse
     {
         $data = $request->validated();
 
@@ -40,12 +46,14 @@ class GenreController extends Controller
             ->with('success', 'ジャンルを登録しました。');
     }
 
-    public function edit(Genre $genre)
+    /** ジャンルの編集画面を表示する。 */
+    public function edit(Genre $genre): View
     {
         return view('genres.edit', compact('genre'));
     }
 
-    public function update(UpdateGenreRequest $request, Genre $genre)
+    /** ジャンルを更新する。 */
+    public function update(UpdateGenreRequest $request, Genre $genre): RedirectResponse
     {
         $data = $request->validated();
 
@@ -56,7 +64,8 @@ class GenreController extends Controller
             ->with('success', 'ジャンルを更新しました。');
     }
 
-    public function destroy(Genre $genre)
+    /** 書籍が紐づいていないジャンルを削除する。 */
+    public function destroy(Genre $genre): RedirectResponse
     {
         if ($genre->books()->exists()) {
             return redirect()

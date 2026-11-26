@@ -33,14 +33,14 @@ class UpdateBookRequest extends FormRequest
                 'string',
             ],
             'isbn' => [
-                'required',
+                'nullable',
                 'string',
                 'size:13',
                 Rule::unique('books', 'isbn')
                     ->ignore($this->route('book')),
             ],
             'published_date' => [
-                'required',
+                'nullable',
                 'date',
             ],
             'description' => [

@@ -54,6 +54,134 @@ class BookTest extends TestCase
         );
     }
 
+    public function test_book_can_be_created_without_isbn_and_published_date(): void
+    {
+        $user = User::factory()->create();
+        $genre = Genre::factory()->create();
+
+        $data = [
+            'title' => 'ISBNと出版日がない本',
+            'author' => '作者',
+            'genres' => [$genre->id],
+        ];
+
+        $response = $this->actingAs($user)
+            ->post('/books', $data);
+
+        $response->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('books', [
+            'title' => $data['title'],
+            'author' => $data['author'],
+            'isbn' => null,
+            'published_date' => null,
+            'user_id' => $user->id,
+        ]);
+
+        $book = Book::where('title', $data['title'])->firstOrFail();
+
+        $response->assertRedirect(route('books.show', $book));
+
+        $response->assertSessionHas(
+            'success',
+            '書籍を登録しました。'
+        );
+    }
+
+    public function test_book_can_be_created_with_empty_isbn_and_published_date(): void
+    {
+        $user = User::factory()->create();
+        $genre = Genre::factory()->create();
+
+        $data = [
+            'title' => 'ISBNと出版日が空欄の本',
+            'author' => '作者',
+            'isbn' => '',
+            'published_date' => '',
+            'genres' => [$genre->id],
+        ];
+
+        $response = $this->actingAs($user)
+            ->post('/books', $data);
+
+        $response->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('books', [
+            'title' => $data['title'],
+            'author' => $data['author'],
+            'isbn' => null,
+            'published_date' => null,
+            'user_id' => $user->id,
+        ]);
+
+        $book = Book::where('title', $data['title'])->firstOrFail();
+
+        $response->assertRedirect(route('books.show', $book));
+
+        $response->assertSessionHas(
+            'success',
+            '書籍を登録しました。'
+        );
+    }
+
+    public function test_book_can_be_created_with_non_numeric_isbn(): void
+    {
+        $user = User::factory()->create();
+        $genre = Genre::factory()->create();
+
+        $data = [
+            'title' => '英字を含むISBNの本',
+            'author' => '作者',
+            'isbn' => '123456789012X',
+            'published_date' => '2026-10-05',
+            'genres' => [$genre->id],
+        ];
+
+        $response = $this->actingAs($user)
+            ->post('/books', $data);
+
+        $response->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('books', [
+            'title' => $data['title'],
+            'author' => $data['author'],
+            'isbn' => $data['isbn'],
+            'user_id' => $user->id,
+        ]);
+
+        $book = Book::where('isbn', $data['isbn'])->firstOrFail();
+
+        $response->assertRedirect(route('books.show', $book));
+
+        $response->assertSessionHas(
+            'success',
+            '書籍を登録しました。'
+        );
+    }
+
+    public function test_book_cannot_be_created_with_invalid_published_date(): void
+    {
+        $user = User::factory()->create();
+        $genre = Genre::factory()->create();
+
+        $data = [
+            'title' => '出版日が不正な本',
+            'author' => '作者',
+            'isbn' => '1234567890123',
+            'published_date' => 'invalid-date',
+            'genres' => [$genre->id],
+        ];
+
+        $response = $this->actingAs($user)
+            ->post('/books', $data);
+
+        $response->assertSessionHasErrors('published_date');
+
+        $this->assertDatabaseMissing('books', [
+            'isbn' => $data['isbn'],
+        ]);
+    }
+
     public function test_book_cannot_be_created_when_isbn_is_not_13_characters(): void
     {
         $user = User::factory()->create();
@@ -164,6 +292,166 @@ class BookTest extends TestCase
             'success',
             '書籍を更新しました。'
         );
+    }
+
+    public function test_book_can_be_updated_without_isbn_and_published_date(): void
+    {
+        $user = User::factory()->create();
+        $genre = Genre::factory()->create();
+
+        $book = Book::factory()->create([
+            'user_id' => $user->id,
+            'title' => '更新前の本',
+            'isbn' => '1234567890123',
+            'published_date' => '2026-10-05',
+        ]);
+
+        $data = [
+            'title' => '更新後の本',
+            'author' => '更新後の作者',
+            'genres' => [$genre->id],
+        ];
+
+        $response = $this->actingAs($user)
+            ->put(route('books.update', $book), $data);
+
+        $response->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('books', [
+            'id' => $book->id,
+            'title' => $data['title'],
+            'author' => $data['author'],
+            'isbn' => '1234567890123',
+            'published_date' => '2026-10-05',
+            'user_id' => $user->id,
+        ]);
+
+        $response->assertRedirect(route('books.show', $book));
+
+        $response->assertSessionHas(
+            'success',
+            '書籍を更新しました。'
+        );
+    }
+
+    public function test_book_can_be_updated_with_empty_isbn_and_published_date(): void
+    {
+        $user = User::factory()->create();
+        $genre = Genre::factory()->create();
+
+        $book = Book::factory()->create([
+            'user_id' => $user->id,
+            'title' => '更新前の本',
+            'isbn' => '1234567890123',
+            'published_date' => '2026-10-05',
+        ]);
+
+        $data = [
+            'title' => '更新後の本',
+            'author' => '更新後の作者',
+            'isbn' => '',
+            'published_date' => '',
+            'genres' => [$genre->id],
+        ];
+
+        $response = $this->actingAs($user)
+            ->put(route('books.update', $book), $data);
+
+        $response->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('books', [
+            'id' => $book->id,
+            'title' => $data['title'],
+            'author' => $data['author'],
+            'isbn' => null,
+            'published_date' => null,
+            'user_id' => $user->id,
+        ]);
+
+        $response->assertRedirect(route('books.show', $book));
+
+        $response->assertSessionHas(
+            'success',
+            '書籍を更新しました。'
+        );
+    }
+
+    public function test_book_can_be_updated_with_non_numeric_isbn(): void
+    {
+        $user = User::factory()->create();
+        $genre = Genre::factory()->create();
+
+        $book = Book::factory()->create([
+            'user_id' => $user->id,
+            'title' => '更新前の本',
+            'isbn' => '1234567890123',
+            'published_date' => '2026-10-05',
+        ]);
+
+        $data = [
+            'title' => '更新後の本',
+            'author' => '更新後の作者',
+            'isbn' => '123456789012X',
+            'published_date' => '2026-10-05',
+            'genres' => [$genre->id],
+        ];
+
+        $response = $this->actingAs($user)
+            ->put(route('books.update', $book), $data);
+
+        $response->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('books', [
+            'id' => $book->id,
+            'title' => $data['title'],
+            'author' => $data['author'],
+            'isbn' => $data['isbn'],
+            'published_date' => $data['published_date'],
+            'user_id' => $user->id,
+        ]);
+
+        $response->assertRedirect(route('books.show', $book));
+
+        $response->assertSessionHas(
+            'success',
+            '書籍を更新しました。'
+        );
+    }
+
+    public function test_book_cannot_be_updated_with_invalid_published_date(): void
+    {
+        $user = User::factory()->create();
+        $genre = Genre::factory()->create();
+
+        $book = Book::factory()->create([
+            'user_id' => $user->id,
+            'title' => '更新前の本',
+            'author' => '更新前の作者',
+            'isbn' => '1234567890123',
+            'published_date' => '2026-10-05',
+        ]);
+
+        $data = [
+            'title' => '更新後の本',
+            'author' => '更新後の作者',
+            'isbn' => '1234567890123',
+            'published_date' => 'invalid-date',
+            'genres' => [$genre->id],
+        ];
+
+        $response = $this->actingAs($user)
+            ->put(route('books.update', $book), $data);
+
+        $response->assertSessionHasErrors('published_date');
+
+        $this->assertDatabaseHas('books', [
+            'id' => $book->id,
+            'title' => '更新前の本',
+            'author' => '更新前の作者',
+            'isbn' => '1234567890123',
+            'published_date' => '2026-10-05',
+            'user_id' => $user->id,
+        ]);
     }
 
     public function test_user_cannot_update_another_users_book(): void

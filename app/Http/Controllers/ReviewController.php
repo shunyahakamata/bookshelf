@@ -6,10 +6,14 @@ use App\Http\Requests\StoreReviewRequest;
 use App\Http\Requests\UpdateReviewRequest;
 use App\Models\Book;
 use App\Models\Review;
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class ReviewController extends Controller
 {
-    public function store(StoreReviewRequest $request, Book $book)
+    /** 書籍にレビューを投稿する。 */
+    public function store(StoreReviewRequest $request, Book $book): RedirectResponse
     {
         $data = $request->validated();
 
@@ -24,14 +28,16 @@ class ReviewController extends Controller
             ->with('success', 'レビューを投稿しました。');
     }
 
-    public function edit(Review $review)
+    /** レビューの編集画面を表示する。 */
+    public function edit(Review $review): View
     {
         $this->authorize('update', $review);
 
         return view('reviews.edit', compact('review'));
     }
 
-    public function update(UpdateReviewRequest $request, Review $review)
+    /** レビューを更新する。 */
+    public function update(UpdateReviewRequest $request, Review $review): RedirectResponse
     {
         $this->authorize('update', $review);
 
@@ -44,7 +50,8 @@ class ReviewController extends Controller
             ->with('success', 'レビューを更新しました。');
     }
 
-    public function destroy(Review $review)
+    /** レビューを削除する。 */
+    public function destroy(Review $review): RedirectResponse
     {
         $this->authorize('delete', $review);
 
@@ -57,11 +64,15 @@ class ReviewController extends Controller
             ->with('success', 'レビューを削除しました。');
     }
 
-    public function like(Review $review)
+    /**
+     * レビューへのいいねを切り替える。
+     */
+    public function like(Review $review): RedirectResponse
     {
-        auth()->user()
-            ->likedReviews()
-            ->toggle($review->id);
+        /** @var User $user */
+        $user = auth()->user();
+
+        $user->likedReviews()->toggle($review->id);
 
         return back();
     }

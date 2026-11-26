@@ -9,6 +9,7 @@ return [
     ],
     'unique' => ':attributeは既に使用されています。',
     'date' => ':attributeには有効な日付を入力してください。',
+    'after_or_equal' => ':attributeには、:date以降の日付を指定してください。',
     'url' => ':attributeには有効なURLを入力してください。',
     'array' => ':attributeは配列で入力してください。',
     'exists' => '選択された:attributeは存在しません。',
@@ -18,6 +19,11 @@ return [
     ],
     'max' => [
         'numeric' => ':attributeは:max以下で入力してください。',
+    ],
+    'custom' => [
+        'target_date' => [
+            'after_or_equal' => '期日には、今日以降の日付を指定してください。',
+        ],
     ],
 
     'attributes' => [
@@ -34,5 +40,7 @@ return [
         'comment' => 'コメント',
         'password' => 'パスワード',
         'user_id' => 'ユーザーID',
+        'book_id' => '書籍',
+        'target_date' => '期日',
     ],
 ];

@@ -382,4 +382,23 @@ class BookIndexTest extends TestCase
         $this->assertSame('2', $query['per_page']);
         $this->assertSame('2', $query['page']);
     }
+
+    public function test_books_can_be_searched_by_zero_keyword(): void
+    {
+        $matchingBook = Book::factory()->create([
+            'title' => 'PHP 8.0 入門',
+            'author' => '山田太郎',
+        ]);
+
+        Book::factory()->create([
+            'title' => 'Laravel入門',
+            'author' => '鈴木花子',
+        ]);
+
+        $response = $this->getJson('/api/v1/books?keyword=0');
+
+        $response->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.id', $matchingBook->id);
+    }
 }

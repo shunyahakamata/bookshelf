@@ -32,13 +32,13 @@ class StoreBookRequest extends FormRequest
                 'string',
             ],
             'isbn' => [
-                'required',
+                'nullable',
                 'string',
                 'size:13',
                 'unique:books,isbn',
             ],
             'published_date' => [
-                'required',
+                'nullable',
                 'date',
             ],
             'description' => [
@@ -56,11 +56,6 @@ class StoreBookRequest extends FormRequest
             'genres.*' => [
                 'integer',
                 'exists:genres,id',
-            ],
-            'user_id' => [
-                'required',
-                'integer',
-                'exists:users,id',
             ],
         ];
     }
